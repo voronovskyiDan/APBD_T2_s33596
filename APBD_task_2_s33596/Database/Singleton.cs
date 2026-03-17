@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APBD_T2_s33596.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,7 @@ namespace APBD_T2_s33596.Database
 
         private Singleton() { }
 
-        //TODO: add collections for items in the exercise
-        //public List<Class> Class { get; } = new();
+        public List<Equipment> Equipments { get; } = new();
+        public List<User> Users { get; } = new();
     }
 }

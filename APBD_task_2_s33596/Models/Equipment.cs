@@ -16,7 +16,7 @@ namespace APBD_T2_s33596.Models
         public EquipmentStatus Status { get; set; }
         public DateTime AddedDat { get; set; }
 
-        public Equipment( string name, string descrption = "")
+        public Equipment(string name, string descrption = "")
         {
             Id = _idCounter++;
             Name = name;

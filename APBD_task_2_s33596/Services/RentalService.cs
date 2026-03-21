@@ -11,18 +11,20 @@ namespace APBD_T2_s33596.Services
 {
     public class RentalService : IRentalService
     {
-        private readonly Singleton database;
+        private readonly SingletonRepository database;
         public RentalService()
         {
-            database = Singleton.Instance;
+            database = SingletonRepository.Instance;
         }
-        public void AddEquipment(Equipment equipment)
+        public async Task AddEquipmentAsync(Equipment equipment)
         {
             database.Equipments.Add(equipment);
+            await database.SaveAsync();
         }
-        public void AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             database.Users.Add(user);
+            await database.SaveAsync();
         }
         public List<Equipment> GetAllAvaliableEquipment()
         {
@@ -43,12 +45,13 @@ namespace APBD_T2_s33596.Services
         {
             return database.Rentals.Where(r => r.IsOverdue()).ToList();
         }
-        public Rental RentEquipment(int userId, int equipmentId, int days)
+        public async Task<Rental> RentEquipmentAsync(int userId, int equipmentId, int days)
         {
             User user = database.Users.FirstOrDefault(u => u.Id == userId);
             Equipment equipment = database.Equipments.FirstOrDefault(e => e.Id == equipmentId);
             if (user == null || equipment == null)
                 throw new Exception("Invalid user or equipment");
+            await database.SaveAsync();
             return user.rentEquipment(equipment, days);
         }
         public string GenerateReport()
@@ -67,19 +70,22 @@ namespace APBD_T2_s33596.Services
             }
             return report.ToString();
         }
-        public double ReturnEquipment(int rentalId)
+        public async Task<double> ReturnEquipmentAsync(int rentalId)
         {
             Rental rental = database.Rentals.FirstOrDefault(r => r.Id == rentalId);
             if (rental == null)
                 throw new Exception("Rental not found");
-            return rental.returnEquipment();
+            double res = rental.returnEquipment();
+            await database.SaveAsync();
+            return res;
         }
-        public void MarkAsUnavailable(int equipmentId)
+        public async Task MarkAsUnavailableAsync(int equipmentId)
         {
             Equipment equipment = database.Equipments.FirstOrDefault(e => e.Id == equipmentId);
             if (equipment == null)
                 throw new Exception("Equipment not found");
             equipment.MarkAsUnavailable();
+            await database.SaveAsync();
         }
     }
 }

@@ -10,22 +10,13 @@ namespace APBD_T2_s33596.Controller
 {
     internal class RentalContoller
     {
-        private readonly IJsonFileService fileService;
         private readonly IRentalService rentalService;
 
-        public RentalContoller(IJsonFileService fileService, IRentalService rentalService)
+        public RentalContoller(IRentalService rentalService)
         {
-            this.fileService = fileService;
             this.rentalService = rentalService;
         }
 
-        void AddUser(User user)
-        {
 
-        }
-        void AddEquipment(Equipment equipment)
-        {
-
-        }
     }
 }

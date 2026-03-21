@@ -9,18 +9,18 @@ namespace APBD_T2_s33596.Interfaces
 {
     internal interface IRentalService
     {
-        void AddUser(User user);
-        void AddEquipment(Equipment equipment);
+        Task AddUserAsync(User user);
+        Task AddEquipmentAsync(Equipment equipment);
 
         List<Equipment> GetAllEquipment();
         List<Equipment> GetAllAvaliableEquipment();
         List<Rental> GetActiveRentals(int userId);
         List<Rental> GetOverdueRentals();
 
-        Rental RentEquipment(int userId, int equipmentId, int days);
-        double ReturnEquipment(int rentalId);
+        Task<Rental> RentEquipmentAsync(int userId, int equipmentId, int days);
+        Task<double> ReturnEquipmentAsync(int rentalId);
 
-        void MarkAsUnavailable(int equipmentId);
+        Task MarkAsUnavailableAsync(int equipmentId);
 
         string GenerateReport();
     } 

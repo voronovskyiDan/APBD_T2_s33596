@@ -48,7 +48,7 @@ namespace APBD_T2_s33596.Models
             DateTime dueTo = from.AddDays(days);
             Rental rental = new Rental(this, equipment, from, dueTo);
             Rentals.Add(rental);
-            equipment.Status = EquipmentStatus.Rented;
+            equipment.MarkAsRented();
 
             return rental;
         }

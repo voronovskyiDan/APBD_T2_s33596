@@ -1,8 +1,11 @@
-﻿using System;
+﻿using APBD_T2_s33596.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace APBD_T2_s33596.Models
 {
@@ -10,21 +13,53 @@ namespace APBD_T2_s33596.Models
     {
         private static int _idCounter = 1;
         public int Id { get; private set; }
-        public User User { get; private set; }
-        public Equipment Equipment { get; private set; }
+        public int UserId { get; private set; }
+        public int EquipmentId { get; private set; }
         public DateTime From { get; private set; }
         public DateTime DueTo { get; private set; }
         public DateTime? Returned { get; private set; }
-        public double Penalty { get; private set; }
+        public decimal Penalty { get; private set; }
 
-        public Rental(User user, Equipment equipment, DateTime from, DateTime dueTo)
+
+        [JsonConstructor]
+        public Rental(int id, int userId, int equipmentId, DateTime from, DateTime dueTo, DateTime? returned, decimal penalty)
+        {
+            Id = id;
+            UserId = userId;
+            EquipmentId = equipmentId;
+            From = from;
+            DueTo = dueTo;
+            Returned = returned;
+            Penalty = penalty;
+        }
+
+        private Rental(User user, Equipment equipment, DateTime from, DateTime dueTo)
         {
             Id = _idCounter++;
-            User = user;
-            Equipment = equipment;
+            UserId = user.Id;
+            EquipmentId = equipment.Id;
             From = from;
             DueTo = dueTo;
             Penalty = 0;
+        }
+        public static Rental Create(
+            User user,
+            Equipment equipment,
+            IReadOnlyCollection<Rental> activeRentals,
+            DateTime from,
+            int days)
+        {
+
+            if (days <= 0)
+                throw new InvalidOperationException("Rental days must be greater than zero.");
+
+            if (!equipment.IsAvailable())
+                throw new InvalidOperationException("Equipment is not available.");
+
+            if (activeRentals.Count >= user.GetRentalLimit())
+                throw new InvalidOperationException("User exceeded rental limit.");
+
+            return new Rental(user, equipment, from, from.AddDays(days));
         }
 
         public bool IsActive()
@@ -35,18 +70,21 @@ namespace APBD_T2_s33596.Models
         {
             return Returned == null && DateTime.Now > DueTo;
         }
-        public double ReturnEquipment()
+        public decimal ReturnEquipment()
         {
             if (Returned != null)
                 throw new InvalidOperationException("Equipment already returned");
             Returned = DateTime.Now;
-            Equipment.MarkAsAvailable();
             if (Returned > DueTo)
             {
                 TimeSpan overdueTime = Returned.Value - DueTo;
-                Penalty = Math.Ceiling(overdueTime.TotalDays) * 3.45; 
+                Penalty = (decimal)(overdueTime.TotalDays * 3.45); 
             }
             return Penalty;
+        }
+        public static void setIdCounter(int count)
+        {
+            _idCounter = count;
         }
     }
 }

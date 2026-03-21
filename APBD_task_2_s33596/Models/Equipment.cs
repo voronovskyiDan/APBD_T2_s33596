@@ -31,6 +31,17 @@ namespace APBD_T2_s33596.Models
             AddedDat = DateTime.Now;
         }
 
+
+        [JsonConstructor]
+        public Equipment(int id, string name, string descrption, EquipmentStatus status, DateTime addedDat)
+        {
+            Id = id;
+            Name = name;
+            Descrption = descrption;
+            Status = status;
+            AddedDat = addedDat;
+        }
+
         public bool IsAvailable()
         {
             return Status == EquipmentStatus.Available;
@@ -52,6 +63,11 @@ namespace APBD_T2_s33596.Models
             if (Status == EquipmentStatus.Available)
                 throw new InvalidOperationException("Equipment is already available");
             Status = EquipmentStatus.Available;
+        }
+
+        public static void setIdCounter(int count)
+        {
+            _idCounter = count;
         }
 
     }

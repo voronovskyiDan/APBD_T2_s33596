@@ -9,6 +9,6 @@ namespace APBD_T2_s33596.Interfaces
     internal interface IJsonFileService
     {
         Task SaveAsync<T>(T data, string filePath);
-        Task<T?> LoadAsync<T>(string filePath);
+        Task<T?> LoadAsync<T>(string filePath, bool createIfAbsent);
     }
 }

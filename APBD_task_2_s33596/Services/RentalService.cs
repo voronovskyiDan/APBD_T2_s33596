@@ -16,27 +16,9 @@ namespace APBD_T2_s33596.Services
         {
             repository = SingletonRepository.Instance;
         }
-        public async Task AddEquipmentAsync(Equipment equipment)
-        {
-            repository.Equipments.Add(equipment);
-            await repository.SaveAsync();
-        }
-        public async Task AddUserAsync(User user)
-        {
-            repository.Users.Add(user);
-            await repository.SaveAsync();
-        }
-        public List<Equipment> GetAllAvaliableEquipment()
-        {
-            return repository.Equipments.Where(e => e.IsAvailable()).ToList();
-        }
-        public List<Equipment> GetAllEquipment()
-        {
-            return repository.Equipments;
-        }
         public List<Rental> GetActiveRentals(int userId)
         {
-            return repository.Rentals.Where(r => r.User.Id == userId && r.IsActive()).ToList();
+            return repository.Rentals.Where(r => r.UserId == userId && r.IsActive()).ToList();
         }
         public List<Rental> GetOverdueRentals()
         {
@@ -47,22 +29,30 @@ namespace APBD_T2_s33596.Services
             var user = repository.Users.First(u => u.Id == userId);
             var equipment = repository.Equipments.First(e => e.Id == equipmentId);
 
-            if (!equipment.IsAvailable())
-                throw new InvalidOperationException("Equipment is not available.");
+            var activeRentals = repository.Rentals
+                .Where(r => r.UserId == userId && r.IsActive()).ToList();
 
-            int activeRentals = repository.Rentals
-                .Count(r => r.User.Id == userId && r.IsActive());
-
-            if (activeRentals >= user.GetRentalLimit())
-                throw new InvalidOperationException("User exceeded rental limit.");
-
-            var rental = new Rental(user, equipment, DateTime.Now, DateTime.Now.AddDays(days));
+            var rental = Rental.Create(user, equipment, activeRentals, DateTime.Now, days);
 
             repository.Rentals.Add(rental);
             equipment.MarkAsRented();
             await repository.SaveAsync();
 
             return rental;
+        }
+        public async Task<decimal> ReturnEquipmentAsync(int rentalId)
+        {
+            Rental rental = repository.Rentals.FirstOrDefault(r => r.Id == rentalId);
+            Equipment equipment = repository.Equipments.First(e => e.Id == rental.EquipmentId);
+
+            if (rental == null)
+                throw new Exception("Rental not found");
+
+            decimal res = rental.ReturnEquipment();
+            equipment.MarkAsAvailable();
+            await repository.SaveAsync();
+
+            return res;
         }
         public string GenerateReport()
         {
@@ -72,32 +62,17 @@ namespace APBD_T2_s33596.Services
             {
                 report.AppendLine($"User: {user.Name} (ID: {user.Id})");
 
-                var rentals = repository.Rentals.Where(r => r.User.Id == user.Id).ToList();
+                var rentals = repository.Rentals.Where(r => r.UserId == user.Id).ToList();
                 foreach (var rental in rentals)
                 {
+                    var equipment = repository.Equipments.First(e => e.Id == rental.EquipmentId);
                     string status = rental.Returned == null ? "Active" : "Returned";
-                    report.AppendLine($"  - Equipment: {rental.Equipment.Name} (ID: {rental.Equipment.Id}), From: {rental.From}, Due To: {rental.DueTo}, Status: {status}");
+                    report.AppendLine($"  - Equipment: {equipment.Name} (ID: {rental.EquipmentId}), From: {rental.From}, Due To: {rental.DueTo}, Status: {status}");
                 }
                 report.AppendLine();
             }
             return report.ToString();
         }
-        public async Task<double> ReturnEquipmentAsync(int rentalId)
-        {
-            Rental rental = repository.Rentals.FirstOrDefault(r => r.Id == rentalId);
-            if (rental == null)
-                throw new Exception("Rental not found");
-            double res = rental.ReturnEquipment();
-            await repository.SaveAsync();
-            return res;
-        }
-        public async Task MarkAsUnavailableAsync(int equipmentId)
-        {
-            Equipment equipment = repository.Equipments.FirstOrDefault(e => e.Id == equipmentId);
-            if (equipment == null)
-                throw new Exception("Equipment not found");
-            equipment.MarkAsUnavailable();
-            await repository.SaveAsync();
-        }
+
     }
 }

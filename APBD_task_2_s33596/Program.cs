@@ -8,10 +8,16 @@ class Program
 {
     static void Main(string[] args)
     {
-        var db = SingletonRepository.Instance;
         IRentalService rentalService = new RentalService();
-        RentalContoller rentalContoller = new RentalContoller(rentalService);
+        IUserService userService = new UserService();
+        IEquipmentService equipmentService = new EquipmentService();
+        ApplicationContoller applicationContoller = new ApplicationContoller(rentalService, equipmentService, userService);
 
+        applicationContoller.AddUserAsync("Doe", "John", "2@gmail.com", "student").Wait();
+       // applicationContoller.AddCameraAsync("Canon EOS R5", "High-end mirrorless camera", "100-51200", "f/2.8").Wait();
+        //applicationContoller.RentEquipmentAsync(1, 1, 7).Wait();
+        
+        Console.WriteLine(applicationContoller.getReport());
 
 
     }

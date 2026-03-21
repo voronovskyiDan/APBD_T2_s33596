@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace APBD_T2_s33596.Models
@@ -15,6 +16,14 @@ namespace APBD_T2_s33596.Models
         public string Surname { get; private set; }
         public UserRole Role { get; private set; }
 
+        [JsonConstructor]
+        public User(int id, string name, string surname, UserRole role)
+        {
+            Id = id;
+            Name = name;
+            Surname = surname;
+            Role = role;
+        }
         public User(string name, string surname, string email, UserRole role) 
         {
             Id = _idCounter++;
@@ -30,6 +39,10 @@ namespace APBD_T2_s33596.Models
                 UserRole.Employee => 5,
                 _ => throw new InvalidOperationException("Unknown role")
             };
+        }
+        public static void setIdCounter(int count)
+        {
+            _idCounter = count;
         }
     }
 

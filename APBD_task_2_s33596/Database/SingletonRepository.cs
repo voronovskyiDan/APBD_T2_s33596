@@ -48,7 +48,7 @@ namespace APBD_T2_s33596.Database
 
         public async Task LoadAsync(string? filePath = null)
         {
-            var data = await _jsonFileService.LoadAsync<RepositoryData>(filePath ?? DefaultFilePath);
+            var data = await _jsonFileService.LoadAsync<RepositoryData>(filePath ?? DefaultFilePath, true);
 
             if (data is null)
                 return;
@@ -58,13 +58,23 @@ namespace APBD_T2_s33596.Database
             Rentals.Clear();
 
             if (data.Equipments is not null)
+            {
                 Equipments.AddRange(data.Equipments);
+                Equipment.setIdCounter(Equipments.Count > 0 ? Equipments.Max(e => e.Id) + 1 : 1);
+            }
 
             if (data.Users is not null)
+            {
                 Users.AddRange(data.Users);
+                User.setIdCounter(Users.Count > 0 ? Equipments.Max(e => e.Id) + 1 : 1);
+            }
 
             if (data.Rentals is not null)
+            {
                 Rentals.AddRange(data.Rentals);
+                Rental.setIdCounter(Rentals.Count > 0 ? Equipments.Max(e => e.Id) + 1 : 1);
+
+            }
         }
 
 

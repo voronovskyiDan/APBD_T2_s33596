@@ -23,5 +23,6 @@ namespace APBD_T2_s33596.Database
 
         public List<Equipment> Equipments { get; } = new();
         public List<User> Users { get; } = new();
+        public List<Rental> Rentals { get; } = new();
     }
 }

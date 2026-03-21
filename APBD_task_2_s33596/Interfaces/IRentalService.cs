@@ -14,10 +14,14 @@ namespace APBD_T2_s33596.Interfaces
 
         List<Equipment> GetAllEquipment();
         List<Equipment> GetAllAvaliableEquipment();
+        List<Rental> GetActiveRentals(int userId);
+        List<Rental> GetOverdueRentals();
 
         Rental RentEquipment(int userId, int equipmentId, int days);
+        double ReturnEquipment(int rentalId);
+
+        void MarkAsUnavailable(int equipmentId);
 
         string GenerateReport();
-
     } 
 }

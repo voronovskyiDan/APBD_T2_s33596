@@ -10,11 +10,11 @@ namespace APBD_T2_s33596.Models
     public abstract class Equipment
     {
         private static int _idCounter = 1;
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Descrption { get; set; }
-        public EquipmentStatus Status { get; set; }
-        public DateTime AddedDat { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public string Descrption { get; private set; }
+        public EquipmentStatus Status { get; private set; }
+        public DateTime AddedDat { get; private set; }
 
         public Equipment(string name, string descrption = "")
         {
@@ -24,5 +24,29 @@ namespace APBD_T2_s33596.Models
             Status = EquipmentStatus.Available;
             AddedDat = DateTime.Now;
         }
+
+        public bool IsAvailable()
+        {
+            return Status == EquipmentStatus.Available;
+        }
+        public void MarkAsRented()
+        {
+            if (Status != EquipmentStatus.Available)
+                throw new InvalidOperationException("Equipment is not available for rent");
+            Status = EquipmentStatus.Rented;
+        }
+        public void MarkAsUnavailable()
+        {
+            if (Status != EquipmentStatus.Rented)
+                throw new InvalidOperationException("Equipment is not currently rented");
+            Status = EquipmentStatus.Unavailable;
+        }
+        public void MarkAsAvailable()
+        {
+            if (Status == EquipmentStatus.Available)
+                throw new InvalidOperationException("Equipment is already available");
+            Status = EquipmentStatus.Available;
+        }
+
     }
 }

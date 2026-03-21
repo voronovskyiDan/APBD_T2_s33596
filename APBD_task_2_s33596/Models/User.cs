@@ -15,8 +15,6 @@ namespace APBD_T2_s33596.Models
         public string Surname { get; private set; }
         public UserRole Role { get; private set; }
 
-        public List<Rental> Rentals { get; private set; } = new List<Rental>();
-
         public User(string name, string surname, string email, UserRole role) 
         {
             Id = _idCounter++;
@@ -24,33 +22,14 @@ namespace APBD_T2_s33596.Models
             Surname = surname;
             Role = role;
         }
-
-        public Rental rentEquipment(Equipment equipment, int days)
+        public int GetRentalLimit()
         {
-            int count = Rentals.Count(r => r.Returned == null);
-            switch (Role)
+            return Role switch
             {
-                case UserRole.Student:
-                    if (count >= 2)
-                        throw new InvalidOperationException("Student cannot have more than 2 active rentals");
-                    break;
-                case UserRole.Employee:
-                    if(count >= 5)
-                        throw new InvalidOperationException("Employee cannot have more than 5 active rentals");
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown user role");
-            }
-
-            if (equipment.Status == EquipmentStatus.Unavailable)
-                throw new Exception("Equipment is not available");
-            DateTime from = DateTime.Now;
-            DateTime dueTo = from.AddDays(days);
-            Rental rental = new Rental(this, equipment, from, dueTo);
-            Rentals.Add(rental);
-            equipment.MarkAsRented();
-
-            return rental;
+                UserRole.Student => 2,
+                UserRole.Employee => 5,
+                _ => throw new InvalidOperationException("Unknown role")
+            };
         }
     }
 

@@ -11,57 +11,69 @@ namespace APBD_T2_s33596.Services
 {
     public class RentalService : IRentalService
     {
-        private readonly SingletonRepository database;
+        private readonly SingletonRepository repository;
         public RentalService()
         {
-            database = SingletonRepository.Instance;
+            repository = SingletonRepository.Instance;
         }
         public async Task AddEquipmentAsync(Equipment equipment)
         {
-            database.Equipments.Add(equipment);
-            await database.SaveAsync();
+            repository.Equipments.Add(equipment);
+            await repository.SaveAsync();
         }
         public async Task AddUserAsync(User user)
         {
-            database.Users.Add(user);
-            await database.SaveAsync();
+            repository.Users.Add(user);
+            await repository.SaveAsync();
         }
         public List<Equipment> GetAllAvaliableEquipment()
         {
-            return database.Equipments.Where(e => e.IsAvailable()).ToList();
+            return repository.Equipments.Where(e => e.IsAvailable()).ToList();
         }
         public List<Equipment> GetAllEquipment()
         {
-            return database.Equipments;
+            return repository.Equipments;
         }
         public List<Rental> GetActiveRentals(int userId)
         {
-            User user = database.Users.FirstOrDefault(u => u.Id == userId);
-            if(user == null)
-                throw new Exception("User not found");
-            return user.Rentals.Where(r => r.IsActive()).ToList();
+            return repository.Rentals.Where(r => r.User.Id == userId && r.IsActive()).ToList();
         }
         public List<Rental> GetOverdueRentals()
         {
-            return database.Rentals.Where(r => r.IsOverdue()).ToList();
+            return repository.Rentals.Where(r => r.IsOverdue()).ToList();
         }
         public async Task<Rental> RentEquipmentAsync(int userId, int equipmentId, int days)
         {
-            User user = database.Users.FirstOrDefault(u => u.Id == userId);
-            Equipment equipment = database.Equipments.FirstOrDefault(e => e.Id == equipmentId);
-            if (user == null || equipment == null)
-                throw new Exception("Invalid user or equipment");
-            await database.SaveAsync();
-            return user.rentEquipment(equipment, days);
+            var user = repository.Users.First(u => u.Id == userId);
+            var equipment = repository.Equipments.First(e => e.Id == equipmentId);
+
+            if (!equipment.IsAvailable())
+                throw new InvalidOperationException("Equipment is not available.");
+
+            int activeRentals = repository.Rentals
+                .Count(r => r.User.Id == userId && r.IsActive());
+
+            if (activeRentals >= user.GetRentalLimit())
+                throw new InvalidOperationException("User exceeded rental limit.");
+
+            var rental = new Rental(user, equipment, DateTime.Now, DateTime.Now.AddDays(days));
+
+            repository.Rentals.Add(rental);
+            equipment.MarkAsRented();
+            await repository.SaveAsync();
+
+            return rental;
         }
         public string GenerateReport()
         {
             StringBuilder report = new StringBuilder();
             report.AppendLine("Rental Report:");
-            foreach (var user in database.Users)
+            foreach (var user in repository.Users)
             {
                 report.AppendLine($"User: {user.Name} (ID: {user.Id})");
-                foreach (var rental in user.Rentals)
+
+                var rentals = repository.Rentals.Where(r => r.User.Id == user.Id).ToList();
+                foreach (var rental in rentals)
                 {
                     string status = rental.Returned == null ? "Active" : "Returned";
                     report.AppendLine($"  - Equipment: {rental.Equipment.Name} (ID: {rental.Equipment.Id}), From: {rental.From}, Due To: {rental.DueTo}, Status: {status}");
@@ -72,20 +84,20 @@ namespace APBD_T2_s33596.Services
         }
         public async Task<double> ReturnEquipmentAsync(int rentalId)
         {
-            Rental rental = database.Rentals.FirstOrDefault(r => r.Id == rentalId);
+            Rental rental = repository.Rentals.FirstOrDefault(r => r.Id == rentalId);
             if (rental == null)
                 throw new Exception("Rental not found");
-            double res = rental.returnEquipment();
-            await database.SaveAsync();
+            double res = rental.ReturnEquipment();
+            await repository.SaveAsync();
             return res;
         }
         public async Task MarkAsUnavailableAsync(int equipmentId)
         {
-            Equipment equipment = database.Equipments.FirstOrDefault(e => e.Id == equipmentId);
+            Equipment equipment = repository.Equipments.FirstOrDefault(e => e.Id == equipmentId);
             if (equipment == null)
                 throw new Exception("Equipment not found");
             equipment.MarkAsUnavailable();
-            await database.SaveAsync();
+            await repository.SaveAsync();
         }
     }
 }

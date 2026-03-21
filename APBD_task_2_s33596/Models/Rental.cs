@@ -35,7 +35,7 @@ namespace APBD_T2_s33596.Models
         {
             return Returned == null && DateTime.Now > DueTo;
         }
-        public double returnEquipment()
+        public double ReturnEquipment()
         {
             if (Returned != null)
                 throw new InvalidOperationException("Equipment already returned");

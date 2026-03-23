@@ -66,13 +66,13 @@ namespace APBD_T2_s33596.Database
             if (data.Users is not null)
             {
                 Users.AddRange(data.Users);
-                User.setIdCounter(Users.Count > 0 ? Equipments.Max(e => e.Id) + 1 : 1);
+                User.setIdCounter(Users.Count > 0 ? Users.Max(e => e.Id) + 1 : 1);
             }
 
             if (data.Rentals is not null)
             {
                 Rentals.AddRange(data.Rentals);
-                Rental.setIdCounter(Rentals.Count > 0 ? Equipments.Max(e => e.Id) + 1 : 1);
+                Rental.setIdCounter(Rentals.Count > 0 ? Rentals.Max(e => e.Id) + 1 : 1);
 
             }
         }

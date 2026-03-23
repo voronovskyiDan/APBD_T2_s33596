@@ -54,8 +54,6 @@ namespace APBD_T2_s33596.Models
         }
         public void MarkAsUnavailable()
         {
-            if (Status != EquipmentStatus.Rented)
-                throw new InvalidOperationException("Equipment is not currently rented");
             Status = EquipmentStatus.Unavailable;
         }
         public void MarkAsAvailable()

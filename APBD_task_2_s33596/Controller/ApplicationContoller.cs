@@ -90,11 +90,11 @@ namespace APBD_T2_s33596.Controller
         {
             if(days <= 0)
                 throw new ArgumentException("Days must be greater than 0.");
-            return await rentalService.RentEquipmentAsync(equipmentId, userId, days);
+            return await rentalService.RentEquipmentAsync(userId, equipmentId, days);
         }
-        public async Task ReturnEquipmentAsync(int rentalId)
+        public async Task<decimal> ReturnEquipmentAsync(int rentalId)
         {
-            await rentalService.ReturnEquipmentAsync(rentalId);
+            return await rentalService.ReturnEquipmentAsync(rentalId);
         }
         public async Task MarkEquipmentAsUnderMaintenanceAsync(int equipmentId)
         {

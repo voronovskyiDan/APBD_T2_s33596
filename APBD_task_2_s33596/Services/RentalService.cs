@@ -26,8 +26,13 @@ namespace APBD_T2_s33596.Services
         }
         public async Task<Rental> RentEquipmentAsync(int userId, int equipmentId, int days)
         {
-            var user = repository.Users.First(u => u.Id == userId);
-            var equipment = repository.Equipments.First(e => e.Id == equipmentId);
+            var user = repository.Users.FirstOrDefault(u => u.Id == userId);
+            var equipment = repository.Equipments.FirstOrDefault(e => e.Id == equipmentId);
+
+            if (equipment == null)
+                throw new Exception("Equipment not found");
+            if (user == null)
+                throw new Exception("User not found");
 
             var activeRentals = repository.Rentals
                 .Where(r => r.UserId == userId && r.IsActive()).ToList();
@@ -43,10 +48,12 @@ namespace APBD_T2_s33596.Services
         public async Task<decimal> ReturnEquipmentAsync(int rentalId)
         {
             Rental rental = repository.Rentals.FirstOrDefault(r => r.Id == rentalId);
-            Equipment equipment = repository.Equipments.First(e => e.Id == rental.EquipmentId);
+            Equipment equipment = repository.Equipments.FirstOrDefault(e => e.Id == rental.EquipmentId);
 
             if (rental == null)
                 throw new Exception("Rental not found");
+            if (equipment == null)
+                throw new Exception("Equipment not found");
 
             decimal res = rental.ReturnEquipment();
             equipment.MarkAsAvailable();

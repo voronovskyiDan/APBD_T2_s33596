@@ -33,7 +33,10 @@ namespace APBD_T2_s33596.Models
             Penalty = penalty;
         }
 
-        private Rental(User user, Equipment equipment, DateTime from, DateTime dueTo)
+        //I know this constructor should be private but I have public constructor for Deserialization purposes and
+        //If I want this to make private I need to add another Entities for Serialization/Deserialization and map it to Domain Entities
+        //which is overkill for this project, so I will just leave it public and add comment that it should be private in real world application
+        public Rental(User user, Equipment equipment, DateTime from, DateTime dueTo) 
         {
             Id = _idCounter++;
             UserId = user.Id;

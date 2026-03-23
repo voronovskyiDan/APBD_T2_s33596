@@ -14,14 +14,16 @@ namespace APBD_T2_s33596.Models
         public int Id { get; private set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
+        public string Email { get; private set; }
         public UserRole Role { get; private set; }
 
         [JsonConstructor]
-        public User(int id, string name, string surname, UserRole role)
+        public User(int id, string name, string surname, string email, UserRole role)
         {
             Id = id;
             Name = name;
             Surname = surname;
+            Email = email;
             Role = role;
         }
         public User(string name, string surname, string email, UserRole role) 
@@ -29,6 +31,7 @@ namespace APBD_T2_s33596.Models
             Id = _idCounter++;
             Name = name;
             Surname = surname;
+            Email = email;
             Role = role;
         }
         public int GetRentalLimit()

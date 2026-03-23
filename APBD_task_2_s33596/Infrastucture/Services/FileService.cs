@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using APBD_T2_s33596.Interfaces;
+using APBD_T2_s33596.Infrastucture.Interfaces;
 
-namespace APBD_T2_s33596.Services
+namespace APBD_T2_s33596.Infrastucture.Services
 {
     internal class JsonFileService : IJsonFileService
     {

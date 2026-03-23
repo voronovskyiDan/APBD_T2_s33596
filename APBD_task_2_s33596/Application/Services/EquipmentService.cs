@@ -1,13 +1,8 @@
-﻿using APBD_T2_s33596.Database;
-using APBD_T2_s33596.Interfaces;
-using APBD_T2_s33596.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using APBD_T2_s33596.Application.Interfaces;
+using APBD_T2_s33596.Domain.Models;
+using APBD_T2_s33596.Infrastucture.Database;
 
-namespace APBD_T2_s33596.Services
+namespace APBD_T2_s33596.Application.Services
 {
 
     internal class EquipmentService : IEquipmentService

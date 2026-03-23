@@ -1,13 +1,13 @@
-﻿using APBD_T2_s33596.Models;
-using APBD_T2_s33596.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using APBD_T2_s33596.Enum;
+using APBD_T2_s33596.Domain.Enum;
+using APBD_T2_s33596.Domain.Models;
+using APBD_T2_s33596.Application.Interfaces;
 
-namespace APBD_T2_s33596.Controller
+namespace APBD_T2_s33596.API.Controller
 {
     internal class ApplicationContoller
     {

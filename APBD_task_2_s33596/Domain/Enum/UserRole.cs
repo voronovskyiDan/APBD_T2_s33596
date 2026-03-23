@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APBD_T2_s33596.Enum
+namespace APBD_T2_s33596.Domain.Enum
 {
-    public enum EquipmentStatus
+    public enum UserRole
     {
-        Available,
-        Rented,
-        Unavailable,
+       Student,
+       Employee,
     }
 }

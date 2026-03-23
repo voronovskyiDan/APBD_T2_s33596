@@ -1,5 +1,4 @@
-﻿using APBD_T2_s33596.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace APBD_T2_s33596.Models
+namespace APBD_T2_s33596.Domain.Models
 {
     public class Rental
     {
